@@ -33,4 +33,16 @@
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/3edf8b4b-645a-469d-b2da-0975c52ff014)
 
 
+## Web Automation
+## Email Automation
+## DOCX/PPT Automation
+## Google Sheets Automation
+## Automation Trigger
+## EXCEL Automation
+## PDF Automation
+## Desktop Automation
+## Archieve Automation
+## LIB
+
+
 
