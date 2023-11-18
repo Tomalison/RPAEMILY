@@ -18,3 +18,19 @@
 - ARRAY : let arry = ["text",100] console.log(arry[1])
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/bfabef18-6022-4333-9b9f-8f7ce5dacd31)
 - 函式: FUNCTION: 自訂function方式 function add(a,b) {return a + b;} console.log(add(1,2));
+
+## 工具函式庫
+- api : 到amily執行工作
+- 如果要產檔案，也可以output.file2 = "test";
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/17618eaf-2317-40ec-9453-fd55a646be39)
+- 用api的做法 : let filetxt = api.read("file.txt");
+- api.write("file3.txt","write test")
+- MATH函式庫 : let result = Math.round(1.23); console.log(result);
+- JSON函式庫 : let obj = {key1:"text",key2:100}  ； let strObj = JSON.stringify(obj) 這是一個標準的JSON寫成文字的語法 --> 再用api.write("obj.txt",strObj) 產出文字檔
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/9e9b0b8c-1ba2-4e58-8455-d13b795ba0de)
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/012905a0-0205-4d78-8c43-7ee5ac6e363c)
+- lodash函式庫 補足javascript中的一些不足
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/3edf8b4b-645a-469d-b2da-0975c52ff014)
+
+
+
