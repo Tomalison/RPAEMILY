@@ -43,12 +43,69 @@
 - 5.範例等待節點，跟4類似只是點下wait(準芯圖示)，點選後續要按下去的逾時秒數，例如點下Download，最慢等待秒數是30秒
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/6735a766-8dac-45b4-ba19-6c6fca4837d8)
 - 6.範例兩階段驗證登入，https://appleid.apple.com，在這裡可以使用Guide(燈泡圖示)>選擇SING IN，這些步驟是要使用者自行操作，所以後續到Sign UP之前的步驟刪除掉
+- 7.更改技能，選該技能，按下設定，就可以改裡面的內容，群組可以把技能的狀態放在一起，例如YT登入技能、YT搜尋技能，可以用成combo
+- 8.Reset Broswer可以清除瀏覽器快取，這樣確保流程都可以一致；Allow group users modify允許群組成員更改技能
+
+## Google Sheets Automation
+- 要RPA操作google sheet要先做前置作業>goolge cloud plamform> 搜尋google sheet api> 建立憑證 > 服務帳戶 > 點擊金鑰(新增金鑰(建立)) > JSON檔 > 點擊EMILY帳號設定 放下金鑰 _設定完成
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/2aa817d8-9b58-4f7a-85df-c581df8525e6)
+- 回到google sheet 中間是sheet id > 將表單先共享給emily-548@tokyo-unity-280609.iam.gserviceaccount.com這個郵箱 > 回到RPA訓練模組，選擇google sheets技能模組> 將要控制的表單ID放到 Spreadsheet ID > 輸入 console.log(api.sheetNames()) 可以確認表單的工作表
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/21c11ac5-b49f-4ecd-b0e6-0226546cb6fd)
+### api控制表單
+- api.addSheet(header, rows, name)
+- header表頭
+- rows列以object的形式
+- name創建新表格的名稱
+``` sh
+let header = ['Name', 'department']
+let rows = [
+{'Name':'Alice','department':'accounting'},
+{'Name':'Bob','department':'marketing'}
+]
+await api.addSheet(header, rows, 'new sheet')
+``` 
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/97fada17-765d-4b6b-8ab6-21c8ffdd180d)
+- java-ctrl+/可以同步註解
+- 刪除表單方式:
+``` sh
+api.delSheet('工作表1')
+```
+- 新增欄位資料方式，要用addRows
+``` sh
+let rows2 = [
+{'Name':'Candy','department':'marketing'},
+]
+await api.addRows('new sheet', rows2)
+```
+- 透過api取出資料
+``` sh
+let data = await api.getRows('new sheet')
+console.log(data)
+```
+- 刪除某一列的資料 (這裡不包含表頭，所以開始算由第二列開始 0-1-2 跟python一樣)
+``` sh
+await api.delRow('new sheet', 2)
+```
+- 控制某一個欄位
+``` sh
+let cell = await api.getCell('new sheet', 2, 1)
+console.log(cell)
+```
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/a3c1ad81-5c49-4836-81ec-6dd716fce991)
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/16e7272c-a28e-4db6-9fbe-359c8e5f7dcc)
+- 抓到那個欄位後，更改欄位內容
+``` sh
+await api.setCell('new sheet', 2, 1, 'advertise')
+```
+## EXCEL Automation 
+
 
 ## Email Automation
 ## DOCX/PPT Automation
-## Google Sheets Automation
+
+
 ## Automation Trigger
-## EXCEL Automation
+
 ## PDF Automation
 ## Desktop Automation
 ## Archieve Automation
