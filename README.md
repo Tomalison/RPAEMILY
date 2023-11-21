@@ -124,6 +124,13 @@ lowPriceProduct.forEach((row) => {
 })
 cosole.log()
 ```
+- 如果要表頭欄位改名，可以向下圖
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/a2ceb965-a98d-45bd-8db2-15c84267474b)
+- 另外一種方式，可以向下圖，依照col順序 : 0代表第一欄 ，以此類推
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/eb6f82a7-8b17-454b-9365-062e7f5f323d)
+- 另外一種正規表示法，先尋找欄位，再把該物件欄位用成該名字，用這種方式可以針對EXCEL欄位名稱相同，但每次下載的欄位資料位置都不同
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/36f7e6fb-7197-4fcf-8e9d-365d56573337)
+
 ### Excel 表格分析
 - 先開啟dubug>切換到console頁面 > PICK你路徑中的xlsx檔 > 選擇你要分析的分頁 > 按下detect > 可以先console.log(input)查看資料是否都有進來了
 - 抓進來之後，我們可以分析資料的內容，例如我要找出銷售金額最高的資料，那因為資料是從第二列開始，Data Cell要從A2開始
@@ -141,7 +148,7 @@ productSummary['mean Price'] = _.meanBy(input, '實銷金額')
 output['productSummary'] = JSON.stringify(productSummary)
 console.log(productSummary)
 ```
-- 再用Navigate(首頁)，CSV CREATOR將這個檔案產出，Output filename取檔名即可
+- 再用Navigate(首頁)，CSV表格建立將這個檔案產出，Output filename取檔名即可
 ``` sh
 let productSummary = JSON.parse(input['productSummary'])
 output.push({
@@ -149,6 +156,56 @@ output.push({
   'Min price': productSummary['min price'],
   'Mean price': productSummary['mean price']
 })
+```
+https://docs.emily.tips/excel2txt
+
+### Excel 輸出
+- 開啟Writer之後，先用程式碼確認是否可正常讀取分頁
+``` sh
+console.log(api.sheetNames())
+```
+- getCell代表的是指取該欄位的欄位值，第一個參數放表單名稱，後兩個參數放欄位位置，0,1代表B1欄位 /  0,2代表C1欄位 / 0, 0代表A1欄位 / 1, 0代表A2欄位 以此類推
+``` sh
+console.log(api.getCell(api.sheetNames()[0], 0, 1]
+console.log(api.getCell(api.sheetNames()[0], 0, 2]
+```
+- 先透過getCell取資料、分割資料；再用setCell分別填入資料欄位
+``` sh
+let sName = api.sheetNames()[0]
+
+let fNameOne = api.getCell(api.sheetNames()[0], 0, 1).split(' ')[0]
+let lNameOne = api.getCell(api.sheetNames()[0], 0, 1).split(' ')[1]
+
+let fNameTwo = api.getCell(api.sheetNames()[0], 0, 2).split(' ')[0]
+let lNameTwo = api.getCell(api.sheetNames()[0], 0, 2).split(' ')[1]
+
+api.setCell(sName, 0 , 0, 'first name')
+api.setCell(sName, 0 , 1, 'last name')
+api.setCell(sName, 1 , 0, 'fNameOne')
+api.setCell(sName, 1 , 1, 'lNameOne')
+api.setCell(sName, 2 , 0, 'fNameTwo')
+api.setCell(sName, 2 , 1, 'fNameTwo')
+api.setCell(sName, 0 , 2, '')
+```
+- 也可以用以下內容更改EXCEL的外觀，接著指要在setCell後面篩入style就可以指定欄位外觀api.setCell(sName, 0 , 0, 'first name', style)
+``` sh
+const style  {
+  alignment:{
+    vertical: 'top',
+    horizontal: 'center',
+    wrapText: false,
+},
+font: {
+  name: 'Calibri',
+  sz: '14',
+  color: {rgb: '556B2F'},
+  bold: true,
+  italic: true,
+  underline: false,
+  strike: false,
+  }
+}
+
 ```
 ## Email Automation
 ## DOCX/PPT Automation
