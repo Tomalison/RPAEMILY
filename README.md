@@ -98,8 +98,58 @@ console.log(cell)
 await api.setCell('new sheet', 2, 1, 'advertise')
 ```
 ## EXCEL Automation 
+### Excel 表格處理
+- 先開啟dubug>切換到console頁面 > PICK你路徑中的xlsx檔 > 選擇你要分析的分頁 > 按下detect > 可以先console.log(input)查看資料是否都有進來了；(Header也可以改名稱) (A1就是第一列當表頭)
+- 可以直接在Low code位置撰寫你要針對欄位調整的程式，如下範例，將某price欄位全部+成10%
+``` sh
+console.log(input)
 
+input.forEach((row) => {
+  output.push({
+    name: row.name,
+    price: row.price*1.1
+  })
+})
+cosole.log()
+```
+- 如果只是要針對某幾個符合條件的price調整10%，例如price>100的，可以這樣寫
+``` sh
+let lowPriceProduct = _.filter(input, p => p.price < 100)
 
+lowPriceProduct.forEach((row) => {
+  output.push({
+    name: row.name,
+    price: row.price*1.1
+  })
+})
+cosole.log()
+```
+### Excel 表格分析
+- 先開啟dubug>切換到console頁面 > PICK你路徑中的xlsx檔 > 選擇你要分析的分頁 > 按下detect > 可以先console.log(input)查看資料是否都有進來了
+- 抓進來之後，我們可以分析資料的內容，例如我要找出銷售金額最高的資料，那因為資料是從第二列開始，Data Cell要從A2開始
+``` sh
+console.log(input)
+output['maxPrice'] = _.maxBy(input, '實銷金額').實銷金額
+console.log(output)
+```
+- 以下可以將程式碼寫完計算後，會變成txt檔，這時候要Save起來，再用Navigate(首頁)，CSV CREATOR將這個檔案產出
+``` sh
+let productSummary ={}
+productSummary['max Price'] = _.maxBy(input, '實銷金額').實銷金額
+productSummary['min Price'] = _.minBy(input, '實銷金額').實銷金額
+productSummary['mean Price'] = _.meanBy(input, '實銷金額')
+output['productSummary'] = JSON.stringify(productSummary)
+console.log(productSummary)
+```
+- 再用Navigate(首頁)，CSV CREATOR將這個檔案產出，Output filename取檔名即可
+``` sh
+let productSummary = JSON.parse(input['productSummary'])
+output.push({
+  'Max price': productSummary['max price'],
+  'Min price': productSummary['min price'],
+  'Mean price': productSummary['mean price']
+})
+```
 ## Email Automation
 ## DOCX/PPT Automation
 
