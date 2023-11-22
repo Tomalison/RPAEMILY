@@ -221,5 +221,90 @@ font: {
 
 ## LIB
 
+## Workspace Script
+- 於工作資料夾中執行 Low-Code，用以存取資料夾內的文字類檔案
+### input輸入物件
+- 在腳本中可以直接存取 input 內建物件。input 物件中的每個 key 為工作資料夾中的一個 TXT 檔案名稱（不包含副檔名），每個 value 為該檔案的文字內容，在腳本被執行時就會自動載入所有文檔，免去於腳本中自行讀取的麻煩：
+``` sh
+// 讀取工作資料夾中 price.txt 的值
+let price = input['price']
+console.log('price:', price)
+```
+### output輸出物件
+- 當腳本需要輸出文檔時，可以直接修改 output 內建物件。加入 output 物件中的每個 key 將被輸出成工作資料夾中的一個 TXT 檔案，檔案名稱即為 key，文字內容為該 key 相對應的 value。
+ ``` sh
+// 寫入值到工作資料夾中 new_price.txt 
+let new_price = 100
+output['new_price'] = new_price
+```
+### api 物件
+- 提供同步函式：api.files(), api.stat(filename), api.read(filename, encoding='utf8'), api.write(filename, text), api.rename(oldname, newname), api.remove(filename)。另外 moment.js 與 lodash 都是內建函式庫，可以直接使用：
+ ``` sh
+// 一筆筆列出所有工作資料夾中的檔案
+api.files().forEach((file) => console.log(file))
 
+// 讀取檔案的各類時戳資訊，例如檔案建立時間、修改時間、最近存取時間
+console.log(api.stat('price.txt'))
 
+// 讀取工作資料夾中的文字檔 price.txt
+console.log(api.read('price.txt'))
+
+// 寫出文字檔到工作資料夾中
+api.write('time.txt', moment().format('HH:mm:ss'))
+
+// 修改工作資料夾中的檔案名稱
+api.rename('time.txt', 'currentTime.txt')
+
+// 刪除工作資料夾中的檔案
+api.remove('price.txt')
+```
+- 以及非同步函式，回傳 Promise 物件：api.run(uuid), api.readCSV(filename, separator, skiplines), api.splitCSV(filename, separator, skiplines, newname, maxRows), api.writeCSV(filename, rows, header) 與 api.writeXML(filename, obj, options)
+ ``` sh
+// 呼叫執行某個自動化技能，其識別碼為 ef4e12a6-636f-4e58-8e14-212089e6fd23
+await api.run('ef4e12a6-636f-4e58-8e14-212089e6fd23')
+
+// 將工作資料夾中的CSV格式大檔案分割成多個CSV格式小檔案，每個檔案不超過5000筆資料
+let files = await api.splitCSV('large.csv', ',', 0, 'small.csv', 5000)
+
+// 寫出的檔案：['small(0).csv', 'small(1).csv', ... ] 存成一個檔案列表
+await api.writeCSV('list.csv', files.map((file, index) => {return {file, index}}), ['index','file'])
+
+// 讀取工作資料夾中的CSV檔案並且印出資料
+let list = await api.readCSV('list.csv')
+console.log(list) 
+
+// 將 JSON 物件轉換成XML格式並寫出檔案，其中<addr>加上屬性，輸出header並縮排
+let obj = {
+  root: [
+    { date: '2023/03/12' },
+    { item: 'coffee' },
+    { item: 'tea' },
+    {
+      _name: 'addr',
+      _content: '101F, #1, Taiwan Road',
+      _attrs: {
+        country: 'TWN',
+        city: 'TPE'
+      }
+    }
+  ]
+}
+await api.writeXML('result.xml', obj, { header: true, indent: '\t' })
+```
+- 另外也提供 zip 讀寫 API 以針對工作資料夾內的檔案做壓縮或解壓縮，此類 API 皆為非同步函式：
+ ``` sh
+// 讀取 input.zip 內檔案
+let inputZip = api.zip()
+await inputZip.load('input.zip')
+let filesInZip = await inputZip.files()
+filesInZip.forEach((file) => console.log(file))
+
+// 解壓縮 input.zip 內的檔案 a.txt
+await inputZip.extract('a.txt')
+
+// 壓縮工作資料夾中 b.jpg 與 c.pdf 成 output.zip
+let outputZip = api.zip()
+await outputZip.add('b.jpg')
+await outputZip.add('c.pdf')
+await outputZip.save('output.zip')
+```
