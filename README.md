@@ -131,15 +131,60 @@ cosole.log()
 - 另外一種正規表示法，先尋找欄位，再把該物件欄位用成該名字，用這種方式可以針對EXCEL欄位名稱相同，但每次下載的欄位資料位置都不同
 ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/36f7e6fb-7197-4fcf-8e9d-365d56573337)
 
+- output.push(input[0]) 可以將你選取的列轉換成CSV、XLSX檔
+``` sh
+let temp = [{"key1" : "value1"},{"key2" : "value2"}]
+temp.forEach(row => output.push(row))
+```
+- 在Emily這個模組中 output這個變數已設定好只像電腦的記憶體A，而Emily在製作表格時會參考記憶體A上儲存的資料，但output = 會將output這個變數重新指向至記憶體B，但Emily還是根據記憶體A來製作表格。因此在輸出的時候，不能將output重新assign
+``` sh
+console.log(input)
+input.forEach( row => {
+  
+  if(row['門店編號']==='ZA001'){output.push(row)}
+})
+```
+- 先放入長度，在定義長度為0清空資訊
+
+``` sh
+console.log(input.length)
+
+output.length = 0
+input.forEach( row => {
+  
+  if(row['門店編號']==='ZA001'){output.push(row)}
+})
+```
+
 ### Excel 表格分析
 - 先開啟dubug>切換到console頁面 > PICK你路徑中的xlsx檔 > 選擇你要分析的分頁 > 按下detect > 可以先console.log(input)查看資料是否都有進來了
 - 抓進來之後，我們可以分析資料的內容，例如我要找出銷售金額最高的資料，那因為資料是從第二列開始，Data Cell要從A2開始
+
+
 ``` sh
 console.log(input)
 output['maxPrice'] = _.maxBy(input, '實銷金額').實銷金額
 console.log(output)
 ```
+``` sh
+console.log(input)
+output['maxPrice'] = _.maxBy(input, '實銷金額').實銷金額
+console.log(output)
+```
+
 - 以下可以將程式碼寫完計算後，會變成txt檔，這時候要Save起來，再用Navigate(首頁)，CSV CREATOR將這個檔案產出
+``` sh
+console.log(input) //讀取資料夾中的txt檔
+console.log(input['檔名']) //選擇資料夾中的txt檔
+```
+``` sh
+console.log(JSON.parse(input['檔名'])) // 還原字串資料成excel
+```
+``` sh
+let max = JSON.parse(input['檔名']) // 建立一個變數，存取還原字串資料的excel
+console.log(max)
+output.push(max)
+```
 ``` sh
 let productSummary ={}
 productSummary['max Price'] = _.maxBy(input, '實銷金額').實銷金額
@@ -157,8 +202,20 @@ output.push({
   'Mean price': productSummary['mean price']
 })
 ```
+
 https://docs.emily.tips/excel2txt
 
+``` sh
+console.log(input)
+output['檔名'] = JSON.stringify(input) //字串化資料
+console.log(output)
+```
+``` sh
+console.log(input)
+let max = _.maxBy(input,"實銷金額")
+console.log(max)
+output['最高銷售金額'] = JSON.stringify(max)
+```
 ### Excel 輸出
 - 開啟Writer之後，先用程式碼確認是否可正常讀取分頁
 ``` sh
