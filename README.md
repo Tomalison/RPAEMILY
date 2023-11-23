@@ -45,7 +45,8 @@
 - 6.範例兩階段驗證登入，https://appleid.apple.com，在這裡可以使用Guide(燈泡圖示)>選擇SING IN，這些步驟是要使用者自行操作，所以後續到Sign UP之前的步驟刪除掉
 - 7.更改技能，選該技能，按下設定，就可以改裡面的內容，群組可以把技能的狀態放在一起，例如YT登入技能、YT搜尋技能，可以用成combo
 - 8.Reset Broswer可以清除瀏覽器快取，這樣確保流程都可以一致；Allow group users modify允許群組成員更改技能
-
+- 一個技能只能有一個循環工作
+- 10.使用新瀏覽器執行子技能，會再開一個新的Emily瀏覽器，就可已達到循環中還有循環的功能
 ## Google Sheets Automation
 - 要RPA操作google sheet要先做前置作業>goolge cloud plamform> 搜尋google sheet api> 建立憑證 > 服務帳戶 > 點擊金鑰(新增金鑰(建立)) > JSON檔 > 點擊EMILY帳號設定 放下金鑰 _設定完成
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/2aa817d8-9b58-4f7a-85df-c581df8525e6)
@@ -320,6 +321,7 @@ font: {
 
 ```
 ## Email Automation
+- 
 ## DOCX/PPT Automation
 
 
