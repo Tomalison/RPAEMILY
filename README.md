@@ -51,6 +51,59 @@
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/2aa817d8-9b58-4f7a-85df-c581df8525e6)
 - 回到google sheet 中間是sheet id > 將表單先共享給emily-548@tokyo-unity-280609.iam.gserviceaccount.com這個郵箱 > 回到RPA訓練模組，選擇google sheets技能模組> 將要控制的表單ID放到 Spreadsheet ID > 輸入 console.log(api.sheetNames()) 可以確認表單的工作表
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/21c11ac5-b49f-4ecd-b0e6-0226546cb6fd)
+### 同步函式 : 
+- api.sheetNames(); //取得所有工作表名稱
+### 非同步函式 : 
+- await api.addSheet(header, rows, name); //新增工作表並填入表頭與資料
+- await api.delSheet(name); //刪除工作表
+- await api.addRows(name, rows); //新增多列資料至指定工作表
+- await api.delRow(name, rowIndex); //刪除工作表某列資料
+- await api.getCell(name, rowIndex, columnIndex); //取得特定儲存格值 rowIndex =0~, columnIndex = A~Z
+- await api.setCell(name, rowIndex, columnIndex, value); //寫入值至特定儲存格
+測試google : https://docs.google.com/spreadsheets/d/19kiDcEi5kZvviyU2c3gdB2O7X-U5ITefOmYkX8PkKxw/edit#gid=1200849655
+https://theoephraim.github.io/node-google-spreadsheet/#/classes/google-spreadsheet-worksheet
+``` sh
+console.log(api.sheetNames())
+await api.setCell('new sheet', 3, 0, 'Tom')
+```
+``` sh
+console.log(api.sheetNames())
+let sheet = await api.loadSheet('new sheet', 'A1:E5')
+let cell1 = await sheet.cell(3,0)
+cell1.value = 'Jerry'
+
+let cell2 = await sheet.cell(3,1)
+cell2.value = 'advertise'
+await sheet.save()
+```
+``` sh
+let employeeInfo = await input.sheetsByTitle["new sheet"].getRows(); //取得工作表中表格資料
+let bobInfo = _.find(employeeInfo, (row)=> row["name"] == "Jerry"); //篩選表格資料 name = "Jerry"
+bobInfo["department"] = "accounting"; //將 name = "Jerry" 的列資料，department 欄位改為 "accounting"
+await bobInfo.save(); //儲存修改的內容
+```
+``` sh
+let buffer = await input.sheetsByTitle["員工資訊"].downloadAsCSV(false); //將工作表內容存為 buffer
+api.write("test.csv", buffer); //寫出檔案
+```
+- 組合技 結束 > 先插入新指令，用Excel分析資料，PICK檔案 > 然後回到googlesheet的自動化處理單元，點下調整參數 
+- 插入指令
+``` sh
+console.log(input)
+output['品類銷售匯總'] = JSON.stringify(input)
+```
+- 回到自動化處理單元
+``` sh
+console.log(input)
+let productsell = JSON.parse(api.read("品類銷售匯總.txt"))
+let header = ['門店編號',	'門店名稱',	'營業日期',	'班次',	'上級分類名稱',	'分類名稱',	'系列',	'商品編號',	'商品名稱',	'商品特徵',	'銷售數量',	'應售金額',	'折扣金額',	'實銷金額',	'未稅金額'	,'商品銷售單數'	,'客單價'	,'客件數'	,'銷售金額占比']
+// console.log(productsell)
+await api.addSheet(header, productsell, 'new sheet')
+await api.addRows('new sheet', productsell)
+```
+``` sh
+
+```
 ### api控制表單
 - api.addSheet(header, rows, name)
 - header表頭
@@ -185,6 +238,8 @@ let max = JSON.parse(input['檔名']) // 建立一個變數，存取還原字串
 console.log(max)
 output.push(max)
 ```
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/55643c87-0593-4166-aa1b-418cf3d94a5f)
+
 ``` sh
 let productSummary ={}
 productSummary['max Price'] = _.maxBy(input, '實銷金額').實銷金額
@@ -278,7 +333,7 @@ font: {
 
 ## LIB
 
-## Workspace Script
+## Workspace Script (工作資料夾執行腳本)
 - 於工作資料夾中執行 Low-Code，用以存取資料夾內的文字類檔案
 ### input輸入物件
 - 在腳本中可以直接存取 input 內建物件。input 物件中的每個 key 為工作資料夾中的一個 TXT 檔案名稱（不包含副檔名），每個 value 為該檔案的文字內容，在腳本被執行時就會自動載入所有文檔，免去於腳本中自行讀取的麻煩：
@@ -365,3 +420,20 @@ await outputZip.add('b.jpg')
 await outputZip.add('c.pdf')
 await outputZip.save('output.zip')
 ```
+- 切割CSV檔
+ ``` sh
+切割 CSV 檔 :
+await api.splitCSV(filename, separator, skiplines, newname, maxRows); //await api.splitCSV('large.csv', ',', 0 , 'small.csv', 5000);
+寫出 CSV 檔 : 
+await api.writeCSV(filename, rows, header);
+```
+
+Lodash : https://lodash.com/docs/
+_.find()
+_.filter()
+_.groupBy()
+_.sumBy()
+moment : https://momentjs.com/
+moment('20220501').format("YYYY/MM/DD")
+moment('20220501').add(1, 'day').format('YYYY-MM-DD')
+moment('20220501').subtract(1, 'month')
