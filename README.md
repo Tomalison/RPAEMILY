@@ -47,6 +47,39 @@
 - 8.Reset Broswer可以清除瀏覽器快取，這樣確保流程都可以一致；Allow group users modify允許群組成員更改技能
 - 一個技能只能有一個循環工作
 - 10.使用新瀏覽器執行子技能，會再開一個新的Emily瀏覽器，就可已達到循環中還有循環的功能
+
+## Web Script
+### document 物件獲取網頁元素的方法
+- document.getElementByID('dd["data-type="24hr"]') //屬性選取器
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/492bfe2b-abf3-4f06-a0f9-3a24369723b0)
+- document.querySelectorAll(".col3f") = document.querySelectorAll('dl["class="col3f"]') 
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/3ec4c711-6670-4381-bec7-1e5d36908d83)
+- 先找到你要的網頁元素
+``` sh
+獲取符合條件的第一個網頁元素 :
+document.getElementById() 透過 #id 獲取網頁元素
+document.querySelector()
+獲取多個符合條件的網頁元素
+document.getElementsByClassName() 根據 css 類別獲取網頁元素
+document.getElementsByTagName() 根據標籤名稱獲取網頁元素
+document.querySelectorAll()
+```
+- 所以當HTML可以找到你要的元素後，就可以用javascripts去控制
+``` sh
+let searchBox = document.querySelector("#keyword"); //輸入框
+let searchBtn = document.querySelector("#btn_search"); // 搜尋鈕
+searchBox.value = "iPad"; //輸入框輸入文字
+searchBtn.click(); //點擊搜尋鈕  
+```
+- 雲中台篩選日期控制為昨日的範例
+``` sh
+var inputElement = document.querySelectorAll('div[widgetname="PARA_BDATE2"] input[type="text"]')[0];
+if (inputElement) {
+    inputElement.value = formattedDate;
+}
+```
+
+
 ## Google Sheets Automation
 - 要RPA操作google sheet要先做前置作業>goolge cloud plamform> 搜尋google sheet api> 建立憑證 > 服務帳戶 > 點擊金鑰(新增金鑰(建立)) > JSON檔 > 點擊EMILY帳號設定 放下金鑰 _設定完成
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/2aa817d8-9b58-4f7a-85df-c581df8525e6)
