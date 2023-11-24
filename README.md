@@ -78,7 +78,117 @@ if (inputElement) {
     inputElement.value = formattedDate;
 }
 ```
+- 搜尋結果標題與價格
+``` sh
+使用開發人員工具找到 :
+當前頁面所有搜尋結果的標題
+當前頁面所有搜尋結果的價格
+參考程式碼 
+document.querySelectorAll(".prod_name"); //商品標題
+document.querySelectorAll("span.price > span.value"); // 商品價格 在子節點
+//打印第一個商品標題的文字
+console.log(document.querySelectorAll(".prod_name")[0].innerText)
+```
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/5ef6faf6-8ab8-450b-892b-fe0d30ff1656)
+- 捲動至最後一筆搜尋結果 (目的是他是拉下去時，才會load更多結果)
+``` sh
+參考程式碼 :
+let lastItem = document.querySelectorAll(".prod_name")[19]; //最後一個商品標題
+lastItem.scrollIntoView({block : "center"});
+//再次練習 7-3
+document.querySelectorAll(".prod_name"); //商品標題
+```
+### 執行腳本程式碼編輯
+- 設定完節點路徑後，EMILY 會根據該路徑找到相關的節點，並存為 nodes 變數，可於程式碼編輯區操作。console.log(nodes)
 
+- 執行腳本有提供 :
+- lodash 套件
+- moment 套件
+- 常用函式
+- read(filename); //讀取文字檔
+- write(filename, text); //寫出文字檔
+- remove(filename); //移除檔案
+- repeat(boolean, delay); //重複執行腳本
+https://classroom.google.com/u/1/c/NjE5NzQxNDgzNzM0/m/NjE5NzQxNDgzNzg4/details
+- 範例，執行腳本查PCHOME商品資訊
+
+-輸入關鍵字並提交
+``` sh
+參考程式碼 :
+let keyword = read("row-keyword.txt"); //讀取文字檔內容
+let searchBox = document.querySelector("#keyword"); //輸入框
+let searchBtn = document.querySelector("#btn_search"); // 搜尋鈕
+searchBox.value = keyword; //輸入關鍵字
+searchBtn.click(); //點擊搜尋鈕
+```
+
+- 輸入價格範圍，並再次提交
+``` sh
+參考程式碼 :
+let min_price = read("row-min_price.txt"); //最小值
+let max_price = read("row-max_price.txt"); //最大值
+let minNode = document.querySelector("input#MinPrice"); //最小值輸入框
+minNode.value = min_price;
+let maxNode = document.querySelector("input#MaxPrice"); // 最大值輸入框
+maxNode.value = max_price;
+let searchNode = document.querySelector("input#btn_PRC"); // 搜尋按鈕
+searchNode.click(); // 點擊搜尋鈕
+```
+
+- 捲動至頁面最底部程式碼撰寫邏輯
+``` sh
+程式碼撰寫邏輯 : 利用 repeat() 不停執行腳本，直到捲動至頁面最底部
+let previousNum = 讀取上次搜尋結果數量;
+let currentNum = 紀錄當前搜尋結果數量;
+//將當前搜尋結果數量寫出成文字檔，提供下次執行此腳本時使用
+write("previousNum.txt", JSON.stringify(currentNum));
+捲動頁面;
+if(currentNum > previousNum) repeat();
+``` 
+- 捲動頁面至底部
+``` sh
+參考程式碼 :
+let previousNum; // 初始化 previousNum 變數
+try{ // try…catch(e)... 會嘗試執行下方程式碼，若出現錯誤，則執行 catch 程式碼
+previousNum = Number(read("previousNum.txt")); // 讀取 previousNum 文字檔內容，為上次執行時的紀錄
+}catch(e){
+previousNum = 0; // 第一次執行時，工作資料夾中沒有 previousNum.txt 可讀取，故初始化數值為 0
+}
+let items = Array.from(document.querySelectorAll("div#ItemContainer > dl")); //抓取每一筆搜尋結果，並轉為陣列
+let currentNum = items.length; // 當前搜尋結果數量 = 陣列長度
+write("previousNum.txt", JSON.stringify(currentNum)); //寫出當前數量，提供下次執行時比對
+_.last(items).scrollIntoView({block : "center"}); //利用 _.last() 抓取最後一筆搜尋結果，並捲動畫面至該筆結果
+if(currentNum > previousNum) repeat(); //比對 currentNum 與 previousNum，若數量不一致則重複執行此腳本
+``` 
+- 執行腳本 : 抓取商品資訊
+``` sh
+參考程式碼 :
+let items = Array.from(document.querySelectorAll("div#ItemContainer > dl")); //抓取每一筆搜尋結果，並轉為陣列
+let itemInfo = []; //初始化商品資訊陣列
+items.forEach(item => {
+product_name = item.querySelector("h5.prod_name"); //抓取該節點的商品名
+product_price = item.querySelector("span.price > span.value"); //抓取該節點的商品價格
+itemInfo.push({
+"product_name" : product_name.innerText, //輸出節點內文為商品名稱
+"price" : product_price.innerText //輸出節點內文為商品價格
+})
+})
+write("itemInfo.txt", JSON.stringify(itemInfo)); //寫出抓取結果
+remove("previousNum.txt"); //刪除本次的數量紀錄，避免影響到下一次的循環工作
+``` 
+- 執行腳本開發建議
+``` sh
+開發之前，請用瀏覽器的開發者工具觀察、嘗試操作該節點
+
+有些節點上的 attribute屬性 是動態產生，例如 : 每次造訪網頁頁面時，同一個節
+點的 id 會變動，沒有辦法依靠特定 attribute屬性來找到正確節點，這部分需要對
+網頁的節點作觀察並制定找到正確目標的方法。
+
+撰寫腳本之前，請打印 console.log(nodes) ，查看設定的節點路徑是否精準
+每一次的腳本執行只操作當前頁面
+```
+- 用chatgpt 在+上去找要找的位置
+![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/e68cb4ea-d682-451a-b873-f7e3f66f0b44)
 
 ## Google Sheets Automation
 - 要RPA操作google sheet要先做前置作業>goolge cloud plamform> 搜尋google sheet api> 建立憑證 > 服務帳戶 > 點擊金鑰(新增金鑰(建立)) > JSON檔 > 點擊EMILY帳號設定 放下金鑰 _設定完成
