@@ -473,6 +473,15 @@ font: {
 ## PDF Automation
 
 ## Desktop Automation
+- 桌面自動化: 模擬人操作電腦的行為，將螢幕、滑鼠、鍵盤交給 EMILY.RPA 操作
+- OPEN TRAINER UI : 打開開發介面
+- DA 模組會模擬人眼看螢幕、手使用鍵盤與滑鼠來自動化的操作
+- 我們將會使用相關的 API 指令來操作電腦的每一個步驟
+- 開發時，要告訴 EMILY 去辨認當前螢幕畫面的哪個地方是需要操作的
+- 我們在開發介面上可以使用螢幕快照功能，並操作訓練介面來告訴 EMILY 應該
+- 要辨識出當前螢幕畫面的哪個圖案，並使用鍵盤或滑鼠來操作
+- 先點下快門>no code螢幕圖示 > 接著可以在這個圖片做你要的指令動作，也可以再撥放鍵旁的圖片集找
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/aa1158c8-3cfb-4956-ba5d-bbe854b0fed8)
 
 ## Archieve Automation
 
