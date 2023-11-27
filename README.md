@@ -482,7 +482,108 @@ font: {
 - 要辨識出當前螢幕畫面的哪個圖案，並使用鍵盤或滑鼠來操作
 - 先點下快門>no code螢幕圖示 > 接著可以在這個圖片做你要的指令動作，也可以再撥放鍵旁的圖片集找
 - ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/aa1158c8-3cfb-4956-ba5d-bbe854b0fed8)
+- Trial按下commit之後可以進到final區>在按下commit就會搬到low code
+- ![image](https://github.com/Tomalison/RPAEMILY/assets/96727036/40480171-b53e-4b08-ac8b-2bc7e8132482)
+``` sh
+TRIAL : 目前實驗用程式碼
+FINAL : 完整程式碼編輯區
+Commit : 輸出當前面板程式碼至工作資料夾與 EMILY 模組
+Run Code : 測試當前面板程式碼，並更新螢幕畫面截圖
+Abort : 中斷當前執行的程式碼
+```
+- 圖片辨識很容易失敗，可以用MASK-Crop > 然後可以用crop-xy點擊圈選位置的周邊(座標)
+``` sh
+螢幕相關
+    await api.screen.whatToDo()
+滑鼠相關
+    await api.mouse.whatToDo()
+鍵盤相關
+    await api.keyboard.whatToDo()
+剪貼簿相關
+    api.clipboard.whatToDo()
+    shell 相關
+    await api.shell.whatToDo()
+其他常用
+    較常見用到的組合功能
+    例如 : ctrl + C
 
+螢幕操作 api.screen
+搜尋截圖位置
+    let pic1 = await api.screen.find("截圖檔名")
+    console.log(pic1)
+等待截圖出現
+    await api.screen.waitFor("截圖檔名", n)
+    *等待截圖出現，最多等待 n 毫秒(ms)
+
+滑鼠游標操作 api.mouse
+左鍵/右鍵點擊
+	await api.mouse.clickLeft()
+	await api.mouse.clickRight()
+移動游標
+	await api.mouse.move(x, y)
+游標拖曳
+	await api.mouse.drag(x, y)
+	*將滑鼠游標從現在位置拖曳至 (x, y)
+滾輪滑動(上/下/左/右)
+	await api.mouse.scrollUp(n)
+	await api.mouse.scrollDown(n)
+	await api.mouse.scrollLeft(n)
+	await api.mouse.scrollRight(n)
+
+鍵盤操作 api.keyboard
+文字輸入/組合鍵輸入
+	await api.keyboard.type(text)
+	await api.keyboard.type(api.key.LeftControl, api.key.A)
+*組合鍵 : ctrl + A，鍵盤的按鍵表示請參考線上文件
+功能鍵輸入
+	await api.keyboard.enter()
+	await api.keyboard.escape()
+	await api.keyboard.backspace()
+	await api.keyboard.tab()
+
+剪貼簿操作 api.clipboard
+寫入剪貼簿
+       api.clipboard.writeText(text)
+讀取剪貼簿
+	let str1 = api.clipboard.readText()
+	console.log(str1)
+
+檔案系統操作 api.shell
+開啟檔案(工作資料夾中檔案/絕對路徑檔案)
+	await api.shell.openPath("output.csv")
+	await api.shell.openPath("C:\Users\Desktop\output.csv")
+開啟檔案總管並選取檔案
+	await api.shell.showItemInFolder("C:\Users\Desktop\output.csv")
+開啟預設瀏覽器並前往網址
+        await api.shell.openExternal("https://google.com")
+檔案移至資源回收桶
+	await api.shell.trashItem("C:\Users\Desktop\output.csv")
+
+其他常用 API
+點擊截圖
+	await api.clickCrop("截圖檔名")
+移動游標至截圖
+	await api.moveToCrop("截圖檔名")
+貼上指定文字
+	await api.pasteText(text)
+讀/寫 CSV 檔
+	let table = await api.readCSV("test.csv", ",", 0) 
+*讀取 test.csv，逗號分割，忽略 0 列(第一列為表頭)
+	await api.writeCSV("output.csv", table)
+常見組合鍵
+	await api.ctrlC()
+	await api.ctrlV()
+	await api.ctrlA()
+等待數秒
+	await api.sleep(n)
+
+在使用 DA 模組進行自動化時，由於 EMILY 會比對當初的截圖與當前的螢幕畫面，並且占用該電腦的鍵盤與滑鼠，所以會有以下限制 : 
+螢幕解析度、標的物的樣子不能變動，否則 EMILY 可能會比對不到相對應的標的物，而造成自動化失敗。
+在 DA 自動化運行中，該電腦不能再使用其他操作，否則可能導致自動化流程失敗。
+操作的軟體若有版本/介面的更新，要注意是否會影響自動化
+使用者要確保輸入法的狀態。有時系統對於某些應用程式會自動切換輸入法，而 EMILY 是真的根據所給內容按下鍵盤，可能會造成輸入的資訊錯誤
+
+```
 ## Archieve Automation
 
 ## LIB
