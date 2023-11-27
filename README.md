@@ -534,7 +534,7 @@ Abort : 中斷當前執行的程式碼
 文字輸入/組合鍵輸入
 	await api.keyboard.type(text)
 	await api.keyboard.type(api.key.LeftControl, api.key.A)
-*組合鍵 : ctrl + A，鍵盤的按鍵表示請參考線上文件
+*組合鍵 : ctrl + A，鍵盤的按鍵表示請參考線上文件 https://docs.emily.tips/da
 功能鍵輸入
 	await api.keyboard.enter()
 	await api.keyboard.escape()
@@ -584,6 +584,14 @@ Abort : 中斷當前執行的程式碼
 使用者要確保輸入法的狀態。有時系統對於某些應用程式會自動切換輸入法，而 EMILY 是真的根據所給內容按下鍵盤，可能會造成輸入的資訊錯誤
 
 ```
+- Move to crop 移動滑鼠
+- Capture to OCR 只能辨識英文跟數字
+- INPUT Text : use keyboard/會有輸入法的受限 ；use clipboard(剪貼簿的方式/比較不會有剪貼簿的受限
+- Send Key(S) : 可以組合你常見的按鍵 例如ctrl+A全選
+- Sleep : 操作要等待，可以讓Emily等待幾秒
+- Copy XY: 複製你當前滑鼠的位置座標
+- Click Left / Right: 滑鼠左右鍵點擊
+- 
 ## Archieve Automation
 
 ## LIB
