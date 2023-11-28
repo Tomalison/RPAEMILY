@@ -591,7 +591,299 @@ Abort : 中斷當前執行的程式碼
 - Sleep : 操作要等待，可以讓Emily等待幾秒
 - Copy XY: 複製你當前滑鼠的位置座標
 - Click Left / Right: 滑鼠左右鍵點擊
-- 
+https://classroom.google.com/u/1/c/NjE5NzQxNDgzNzM0/m/NjE5NzQxNDgzNzgz/details
+``` sh
+截圖小常識
+在 ALL CROPS 介面中的截圖，會存檔於工作資料夾 tmp 中，若於 ALL CROPS
+介面中刪除，tmp 中該圖片亦會刪除
+若開發前 tmp 中已有截圖，在『開發DA新技能』或『調整』舊有DA技能時，會將
+tmp 中截圖一併放置於 ALL CROPS 中
+SAVE 流程時，會將 tmp 中圖片一併儲存
+『調整』DA 模組時，會將該 DA 技能中所儲存的截圖下載至 tmp 中
+『執行』DA 模組時，會將該 DA 技能中所儲存的截圖下載至流水號資料夾中
+DA 中的截圖檔名通常難以辨別該圖片的內容，所以在截圖取得檔名後，建議在程式
+碼最一開始宣告一個物件來存放檔名
+物件 key-value 建議對應的方式為 "圖片描述" : "圖片檔名"
+例如在程式碼開頭宣告 :
+let crops =
+{ "add" : "crop-1198550763b6611ea66f20f5d02ad6920b6209bb5a01691e2a28d7fc7fced956.png",
+"number1" : "crop-9acaca2b92257f1f566549d4ef0e3c67c10087feec0c92f21baf89dcb283d760.png" }
+在程式碼中需要用到的時候就可以直接進行取用，例如 :
+await api.clickCrop(crops["number1"], 15, 20);
+await api.moveToCrop(crops["add"]);
+
+常用的操作寫成 function
+在 DA 模組中我們會把每個動作化作一行一行的指令，若有常用的動作，建議將這些
+動作合併為一個 function
+例如 : 我將『clickCrop』、『Ctrl + C』合併為『clickCropAndCopy』函式如下 :
+async function clickCropAndCopy(cropName){
+await api.clickCrop(cropName);
+await api.ctrlC();
+}
+後續若我有使用到這樣的功能，我可以直接呼叫
+await api.clickCropAndCopy(crops["number1"]);
+這行程式碼就會執行『clickCrop』、『Ctrl + C』
+
+TRIAL/FINAL 程式碼編輯
+DA 開發時會按照操作順序來編寫程式，若有一小段程式碼需要做測試，我們會將該
+段程式碼撰寫於 TRIAL 面板測試，並將測試過的程式碼段落整理至 FINAL 面板。因
+此在整個 DA 模組開發完畢時，完整的程式碼就會整理在 FINAL 面板。
+
+適時使用 COMMIT 儲存程式碼
+在 DA 開發介面中，COMMIT 功能可以將當前面板的程式碼提交回 EMILY 中，同時
+亦會在工作資料夾 tmp 中儲存程式碼的 Javascript 檔案，檔名如 : code-final-xxx.js或
+是 code-trail-xxx.js，建議程式碼編輯到一個段落時，都使用 COMMIT 將程式碼儲存
+於 tmp 中
+*若沒有儲存，且誤關了開發介面或是EMILY，將會流失已撰寫好的程式碼
+```
+``` sh
+螢幕相關 API
+
+取得螢幕大小 api.screen.size()
+await api.screen.size();
+說明 : 取得當前螢幕大小
+參數 : 無
+回傳 : (Object) 物件，當前螢幕大小
+物件格式 : {"width":2256 , "height":1504}
+
+搜尋截圖位置 api.screen.find()
+await api.screen.find(filename, options);
+說明 : 在當前畫面上找尋指定的截圖，並回傳該截圖在當前螢幕上的位置
+參數 :
+filename :(String) 字串，截圖檔名
+options :(Object) 選項物件 ，控制項
+回傳 : (Object)截圖位置物件
+物件格式 : {"left":100 , "top":100, "height":50,"width":100, "confidence":0.9997}
+{"left":100 , "top":100, "height":50,"width":100, "confidence":0.9997}
+
+參數 : options 控制項物件
+說明 : 此參數可以控制搜尋圖片的範圍與最低信心水準
+格式 :
+{"left":0 , "top":600, "height":300,"width":300, "confidence":0.98}
+說明 :
+"left" : 與螢幕左界的距離(pixel)
+"top" : 與螢幕上界的距離(pixel)
+"height" : 高度(pixel)
+"width" : 寬度(pixel)
+"confidence" : 信心水準(0~1)
+
+等待截圖 api.screen.waitFor()
+await api.screen.waitFor(filename, millisecond, options);
+說明 : 在當前畫面上等待指定的截圖，在等待最大秒數內出現該截圖後才會執行下一
+行指令，並回傳該截圖在當前螢幕上的位置，若在設定的秒數內沒有找到該截圖，則
+會報錯
+參數 :
+filename :(String) 字串，截圖檔名
+millisecond :(Num) 數字 ，等待毫秒數
+options : (Object) 物件，控制項
+回傳 : (Object) 截圖位置物件
+物件格式 : {"left":100 , "top":100, "height":30,"width":30, "confidence":0.9997}
+
+```
+``` sh
+滑鼠相關 API
+
+操作滑鼠移動/拖拉/點擊
+await api.mouse.move(x, y);
+說明 : 移動滑鼠至指定座標
+參數 :
+x :(Num) 數字，當前螢幕 x 座標 (pixel)
+y :(Num) 數字，當前螢幕 y 座標 (pixel)
+await api.mouse.clickLeft();
+說明 : 點擊左鍵
+await api.mouse.drag(x, y);
+說明 : 拖拉滑鼠至指定座標
+參數 :
+x :(Num) 數字，當前螢幕 x 座標 (pixel)
+y :(Num) 數字，當前螢幕 y 座標 (pixel)
+await api.mouse.clickRight();
+說明 : 點擊右鍵
+
+滑鼠滾輪操作
+await api.mouse.scrollUp(n);
+await api.mouse.scrollDown(n);
+await api.mouse.scrollLeft(n);
+await api.mouse.scrollRight(n);
+說明 : 使用滑鼠滾輪向(上/下/左/右)捲動
+參數 :
+n :(Number) 數字，滾輪滾動數，該台電腦的滾輪設定會影響捲動的幅度
+```
+
+``` sh
+鍵盤相關 API
+
+文字輸入/按鍵輸入 api.keyboard.type()
+await api.keyboard.type(text);
+說明 : 使用鍵盤輸入文字，EMILY會使用電腦當前輸入法一一輸入文字
+參數 :
+text : (String) 字串，要輸入的文字
+await api.keyboard.type(key1, key2, …);
+說明 : 使用鍵盤依序按下按鍵，可使用組合鍵
+參數 :
+key : 按鍵碼，如 api.key.LeftControl，按鍵表參考下頁
+
+參數 : 按鍵碼 api.key
+說明 : 使用 await api.keyboard.type(key1, key2, …); 中的按鍵碼參數，提供的按鍵碼
+如下
+註 :
+Super 鍵 = Windows Win鍵
+= Mac Command鍵
+
+功能鍵輸入
+await api.keyboard.enter();
+await api.keyboard.escape();
+await api.keyboard.backspace();
+await api.keyboard.tab();
+說明 : 按下功能鍵 Enter/Esc/Backspace/Tab
+```
+``` sh
+剪貼簿相關 API
+
+api.clipboard.write()/api.clipboard.read()
+api.clipboard.write(text);
+說明 : 將文字內容寫入系統剪貼簿中
+參數 :
+text : (String) 字串，要寫入的文字
+api.clipboard.read();
+說明 : 讀取系統剪貼簿中文字
+回傳 : (String) 字串，系統剪貼簿中文字
+
+```
+``` sh
+檔案系統相關 API
+
+開啟檔案 api.shell.openPath()
+await api.shell.openPath(path);
+說明 : 開啟指定路徑的檔案
+參數 :
+path : (String) 字串，檔案/應用程式的路徑
+*註 : 若要開啟工作資料夾中的檔案，直接給檔案的名稱即可，例如 :
+await api.shell.openPath("text.xlsx"); // 開啟工作資料夾中的 test.xlsx 檔案
+
+開啟檔案位置並選取 api.shell.showItemInFolder()
+await api.shell.showItemInFolder(path);
+說明 : 開啟該檔案所在位置的資料夾，並選取該檔案
+參數 :
+path : (String) 字串，檔案/應用程式的路徑
+
+檔案移至資源回收桶 api.shell.trashItem()
+await api.shell.trashItem(path);
+說明 : 將指定路徑的檔案移至資源回收桶
+參數 :
+path : (String) 字串，檔案/應用程式的路徑
+
+開啟網頁連結 api.shell.openExternal()
+await api.shell.openExternal(url);
+說明 : 呼叫預設瀏覽器，並前往指定網頁
+參數 :
+url : (String) 字串，網址
+```
+
+``` sh
+其他實用 API
+
+移動滑鼠至截圖 api.moveToCrop()
+await api.moveToCrop(filename, relX, relY, options);
+說明 : 移動滑鼠至指定截圖
+參數 :
+filename :(String) 字串，截圖檔名
+relX :(Num) 數字，相對座標 X
+relY :(Num) 數字，相對座標 Y
+options :(Object) 選項物件 ，控制項
+註 : 此 API 相當於 api.screen.find() + api.mouse.move()
+
+點擊截圖 api.clickCrop()
+await api.clickCrop(filename, relX, relY, options);
+說明 : 移動滑鼠至指定截圖並點擊
+參數 :
+filename :(String) 字串，截圖檔名
+relX :(Num) 數字，相對座標 X
+relY :(Num) 數字，相對座標 Y
+options :(Object) 選項物件 ，控制項
+註 : 此 API 相當於 api.screen.find() + api.mouse.move() + api.mouse.clickLeft()
+
+貼上文字 api.pasteText()
+await api.pasteText(text);
+說明 : 在當前輸入框貼上指定文字
+參數 :
+text :(String) 字串，文字
+註 : 此 API 相當於
+api.clipboard.write(text) + api.keyboard.type(api.key.LeftControl, api.key.V)
+
+全選/複製/貼上
+await api.ctrlA();
+說明 : 全選
+註 : 此 API 相當於 api.keyboard.type(api.key.LeftControl, api.key.A);
+await api.ctrlC();
+說明 : 複製
+註 : 此 API 相當於 api.keyboard.type(api.key.LeftControl, api.key.C);
+await api.ctrlV();
+說明 : 貼上
+註 : 此 API 相當於 api.keyboard.type(api.key.LeftControl, api.key.V);
+
+時間暫停 api.sleep()
+await api.sleep(n);
+說明 : 暫停幾秒鐘
+參數 :
+n :(Num) 數字，毫秒
+註 : 此 API 常用於各項動作的指令之間，避免 EMILY 執行太快速，電腦速度跟不上
+
+讀取 CSV 檔 api.readCSV()
+await api.readCSV(filepath, separator, headerRow);
+說明 : 讀取 CSV 檔案
+參數 :
+filepath :(String) 字串，CSV 檔案路徑，或是工作資料夾中檔名
+separator :(String) 字串，檔案以什麼符號分割，通常為逗號 ","
+headerRow :(Num) 數字，表頭列位置的列數，0 代表第一列
+回傳 : (Array) 陣列，物件陣列表格資料
+格式 : [{"header1" : 10, "header2" : 20}, {"header1" : 15, "header2" : 6}, …]
+
+寫出 CSV 檔 api.writeCSV()
+await api.writeCSV(filename, data);
+說明 : 寫出 CSV 檔案
+參數 :
+filename :(String) 字串，CSV 檔名
+data :(Array) 陣列，物件陣列表格資料
+格式 : [{"header1" : 10, "header2" : 20}, {"header1" : 15, "header2" : 6}, …]
+
+```
+
+``` sh
+常用操作 : 重複執行一系列動作
+
+說明 : 同樣的動作要執行多次，可以利用迴圈來執行，例如 : 執行 5 次移動滑鼠
+
+參考程式碼 :
+for(let i = 0; i<5; i++){
+await api.mouse.move(0, 0);
+await api.sleep(1000);
+await api.mouse.move(150, 150);
+await api.sleep(1000);
+}
+註 : 非同步程式碼不能使用 Array.forEach() 來執行，但是 for、while 等 loop 可以
+
+常用操作 : 捲動頁面直到指定截圖出現
+說明 : 模擬人使用滑鼠捲動頁面，看見指定目標後進行後續的操作
+參考程式碼 :
+let conf = 0; // 起始 confidence 值
+while(conf < 0.99){ //圖片 confidence < 0.99 要繼續找、捲動，直到 >0.99為止
+let result = await api.screen.find("targetPic"); // 搜尋目標圖片
+await api.mouse.scrollDown(300); // 向下捲動
+conf = result.confidence; // 更新 conf 數值，為本次搜尋結果的 confidence
+}
+
+DA 常見除錯處理
+Q : EMILY DA 執行/測試有問題，該朝哪個方向做調整 ?
+螢幕相關指令 :
+MASK 圖片留下要辨識的部分，提高精確度
+調高選項物件 confidence (預設為 0.95)，例如調整至 0.99，找出高相似度的圖
+調整選項物件，限制圖片搜索區域
+滑鼠、鍵盤相關指令 :
+輸入文字要確認輸入法，或是使用 await api.pasteText(text); 取代
+其他 :
+注意每個指令之間是否動作太快，適度的在指令之間加上 await api.sleep(n);
+
+```
 ## Archieve Automation
 
 ## LIB
